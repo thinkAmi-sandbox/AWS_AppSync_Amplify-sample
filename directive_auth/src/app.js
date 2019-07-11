@@ -90,13 +90,13 @@ awsCognitoWithoutDescriptionButton.addEventListener('click', async () => {
 
   await API.graphql(
     {
-      query: queries.awsCognitoWithoutDescription,
-      authMode: 'API_KEY'
-      // authMode: 'AMAZON_COGNITO_USER_POOLS'
+      query: queries.awsWithoutDescription,
+      // authMode: 'API_KEY'
+      authMode: 'AMAZON_COGNITO_USER_POOLS'
     }
   ).then((event) => {
     console.log('ok');
-    console.log(event.data.awsCognito.items[0]);
+    console.log(event.data.awsWithoutDescription.items[0]);
   }).catch((e) => {
     console.log('error!');
     console.log(e);

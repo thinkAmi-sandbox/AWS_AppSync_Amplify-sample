@@ -74,15 +74,16 @@ export const awsCognito = `query awsCognito(
 }
 `;
 
-export const awsCognitoWithoutDescription = `query awsCognito(
+export const awsWithoutDescription = `query awsWithoutDescription(
   $filter: ModelTodoFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  awsCognito(filter: $filter, limit: $limit, nextToken: $nextToken) {
+  awsWithoutDescription(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
       name
+      description
     }
     nextToken
   }
