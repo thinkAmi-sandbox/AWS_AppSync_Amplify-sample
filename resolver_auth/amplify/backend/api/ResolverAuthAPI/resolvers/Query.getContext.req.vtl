@@ -1,0 +1,32 @@
+## Cognitoのユーザープールのユーザーのうち、Groupが "admin" の場合のみ、データを取得可能にする
+#set( $groups = $context.identity.claims.get("cognito:groups") )
+
+## ユーザーにグループが設定されていない場合は、キー自体が存在しないことに注意
+#if( $util.isNull($groups) )
+    $util.unauthorized()
+#end
+
+#foreach( $group in $groups )
+    #if( $group != "admin" )
+        $util.unauthorized()
+    #end
+#end
+
+
+## また、モバイルの時は、データ取得不可
+## CloudFrontのヘッダが取得できているので、それを使用(ふつうのUserAgentも取得できる)
+#if( $context.request.headers.get("cloudfront-is-mobile-viewer") == "true")
+    $util.unauthorized()
+#end
+
+{
+    "version": "2017-02-28",
+    "payload": {
+        "source": $util.toJson($context.source),
+        "identity": $util.toJson($context.identity),
+        "claims": $context.identity.claims,
+        "sourceIp": $util.toJson($context.identity.sourceIp),
+        "request": $util.toJson($context.request),
+        "headers": $util.toJson($context.request.headers)
+   }
+}

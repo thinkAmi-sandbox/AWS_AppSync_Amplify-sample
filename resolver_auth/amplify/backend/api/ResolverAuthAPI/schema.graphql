@@ -1,0 +1,12 @@
+type Context {
+    source: String
+    identity: String
+    claims: String
+    sourceIp: String
+    request: String
+    headers: String
+}
+
+type Query {
+    getContext: Context
+}
