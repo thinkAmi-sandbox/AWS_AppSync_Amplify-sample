@@ -9,7 +9,8 @@
     "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0",
     "copy-webpack-plugin": "^4.5.2",
-    "webpack-dev-server": "^3.1.5"
+    "webpack-dev-server": "^3.1.5",
+    "lodash": ">=4.17.13"
   },
   "scripts": {
     "start": "webpack && webpack-dev-server --mode development",
