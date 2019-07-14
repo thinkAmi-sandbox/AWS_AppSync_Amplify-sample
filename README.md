@@ -21,3 +21,7 @@
 - directive_auth/
   - [AWS AppSyncのSchemaで、認証・認可系ディレクティブの aws_auth や aws_cognito_user_pools などを試してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/11/235535)
     - aws-amplify 1.1.30
+    
+- resolver_auth/
+  - [AWS AppSyncのリゾルバで、AWS CognitoのグループやHTTPリクエストヘッダを使った認可処理を書いてみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/14/215622)
+    - aws-amplify 1.1.30
