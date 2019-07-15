@@ -1,0 +1,230 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Add Pipeline resolver with Existing DynamoDB",
+  "Metadata": {},
+  "Parameters": {
+    "AppSyncApiId": {
+      "Type": "String",
+      "Description": "The id of the AppSync API associated with this project."
+    },
+    "AppSyncApiName": {
+      "Type": "String",
+      "Description": "The name of the AppSync API",
+      "Default": "AppSyncSimpleTransform"
+    },
+    "env": {
+      "Type": "String",
+      "Description": "The environment name. e.g. Dev, Test, or Production",
+      "Default": "NONE"
+    },
+    "S3DeploymentBucket": {
+      "Type": "String",
+      "Description": "The S3 bucket containing all deployment assets for the project."
+    },
+    "S3DeploymentRootKey": {
+      "Type": "String",
+      "Description": "An S3 key relative to the S3DeploymentBucket that points to the root\nof the deployment directory."
+    },
+    "AuthorDynamoDBServiceRoleArn": {
+      "Type": "String",
+      "Description": "DynamoDBServiceRoleArn of Author table"
+    },
+    "BlogDynamoDBServiceRoleArn": {
+      "Type": "String",
+      "Description": "DynamoDBServiceRoleArn of Blog table"
+    }
+  },
+  "Resources": {
+    "AuthorTable": {
+      "Type": "AWS::AppSync::DataSource",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AppSyncApiId"
+        },
+        "Name": "AuthorDataSource",
+        "Type": "AMAZON_DYNAMODB",
+        "ServiceRoleArn": {
+          "Ref": "AuthorDynamoDBServiceRoleArn"
+        },
+        "DynamoDBConfig": {
+          "TableName": "Author",
+          "AwsRegion" : {
+            "Ref": "AWS::Region"
+          }
+        }
+      }
+    },
+    "BlogTable": {
+      "Type": "AWS::AppSync::DataSource",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AppSyncApiId"
+        },
+        "Name": "BlogDataSource",
+        "Type": "AMAZON_DYNAMODB",
+        "ServiceRoleArn": {
+          "Ref": "BlogDynamoDBServiceRoleArn"
+        },
+        "DynamoDBConfig": {
+          "TableName": "Blog",
+          "AwsRegion" : {
+            "Ref": "AWS::Region"
+          }
+        }
+      }
+    },
+    "PipeLineResolverOfAuthorAndBlog": {
+      "Type": "AWS::AppSync::Resolver",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AppSyncApiId"
+        },
+        "TypeName": "Query",
+        "FieldName": "getByPipeline",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt" : [ "FunctionBlog" , "FunctionId" ]
+            },
+            {
+              "Fn::GetAtt" : [ "FunctionBlogWithAuthor" , "FunctionId" ]
+            }
+          ]
+        },
+        "RequestMappingTemplateS3Location": {
+          "Fn::Sub": [
+            "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/Query.PipeLineResolverOfAuthorAndBlog.req.vtl",
+            {
+              "S3DeploymentBucket": {
+                "Ref": "S3DeploymentBucket"
+              },
+              "S3DeploymentRootKey": {
+                "Ref": "S3DeploymentRootKey"
+              }
+            }
+          ]
+        },
+        "ResponseMappingTemplateS3Location": {
+          "Fn::Sub": [
+            "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/Query.PipeLineResolverOfAuthorAndBlog.res.vtl",
+            {
+              "S3DeploymentBucket": {
+                "Ref": "S3DeploymentBucket"
+              },
+              "S3DeploymentRootKey": {
+                "Ref": "S3DeploymentRootKey"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "FunctionBlog": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AppSyncApiId"
+        },
+        "Name": "GetBlog",
+        "Description": "Get Blog Table",
+        "DataSourceName": {
+          "Fn::GetAtt" : [ "BlogTable" , "Name" ]
+        },
+        "FunctionVersion": "2018-05-29",
+        "RequestMappingTemplateS3Location": {
+          "Fn::Sub": [
+            "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/Query.GetBlog.req.vtl",
+            {
+              "S3DeploymentBucket": {
+                "Ref": "S3DeploymentBucket"
+              },
+              "S3DeploymentRootKey": {
+                "Ref": "S3DeploymentRootKey"
+              }
+            }
+          ]
+        },
+        "ResponseMappingTemplateS3Location": {
+          "Fn::Sub": [
+            "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/Query.GetBlog.res.vtl",
+            {
+              "S3DeploymentBucket": {
+                "Ref": "S3DeploymentBucket"
+              },
+              "S3DeploymentRootKey": {
+                "Ref": "S3DeploymentRootKey"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "FunctionBlogWithAuthor": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AppSyncApiId"
+        },
+        "Name": "GetBlogWithAuthor",
+        "Description": "Merge Blog and Author",
+        "DataSourceName": {
+          "Fn::GetAtt" : [ "AuthorTable" , "Name" ]
+        },
+        "FunctionVersion": "2018-05-29",
+        "RequestMappingTemplateS3Location": {
+          "Fn::Sub": [
+            "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/Query.GetBlogWithAuthor.req.vtl",
+            {
+              "S3DeploymentBucket": {
+                "Ref": "S3DeploymentBucket"
+              },
+              "S3DeploymentRootKey": {
+                "Ref": "S3DeploymentRootKey"
+              }
+            }
+          ]
+        },
+        "ResponseMappingTemplateS3Location": {
+          "Fn::Sub": [
+            "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/Query.GetBlogWithAuthor.res.vtl",
+            {
+              "S3DeploymentBucket": {
+                "Ref": "S3DeploymentBucket"
+              },
+              "S3DeploymentRootKey": {
+                "Ref": "S3DeploymentRootKey"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Conditions": {
+    "HasEnvironmentParameter": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "env"
+            },
+            "NONE"
+          ]
+        }
+      ]
+    },
+    "AlwaysFalse": {
+      "Fn::Equals": [
+        "true",
+        "false"
+      ]
+    }
+  },
+  "Outputs": {
+    "EmptyOutput": {
+      "Description": "An empty output. You may delete this if you have at least one resource above.",
+      "Value": ""
+    }
+  }
+}

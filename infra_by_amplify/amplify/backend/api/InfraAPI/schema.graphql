@@ -1,0 +1,29 @@
+type Board {
+	key: String
+	author: String
+	content: String
+}
+
+type BoardConnection {
+	items: [Board]
+	nextToken: String
+}
+
+
+type NoneResponse {
+	comment: String
+}
+
+
+type BlogWithAuthor {
+	id: String!
+	title: String
+	author_id: String
+	author_name: String
+}
+
+type Query {
+	listBoards(limit: Int, nextToken: String): BoardConnection
+	getNoneDatasource: NoneResponse
+	getByPipeline(id: String!): BlogWithAuthor
+}

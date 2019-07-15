@@ -1,0 +1,7 @@
+{
+    "AppSyncApiName": "InfraAPI",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "BoardDynamoDBServiceRoleArn": "arn:aws:iam::xxx:role/service-role/appsync-xxx-Board",
+    "AuthorDynamoDBServiceRoleArn": "arn:aws:iam::xxx:role/service-role/appsync-xxx-Author",
+    "BlogDynamoDBServiceRoleArn": "arn:aws:iam::xxx:role/service-role/appsync-xxx-Blog"
+}

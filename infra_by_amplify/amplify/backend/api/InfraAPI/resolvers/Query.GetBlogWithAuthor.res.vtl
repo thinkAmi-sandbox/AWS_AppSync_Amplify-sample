@@ -1,0 +1,11 @@
+## Raise a GraphQL field error in case of a datasource invocation error
+#if($ctx.error)
+    $util.error($ctx.error.message, $ctx.error.type)
+#end
+## Pass back the result from DynamoDB. **
+
+## GetBlogの結果に、author_nameとして今回取得したAuthorテーブルのnameの値をマージ
+$util.qr($ctx.prev.result.put("author_name", $ctx.result.name))
+
+## マージしたデータを返す
+$util.toJson($ctx.prev.result)
