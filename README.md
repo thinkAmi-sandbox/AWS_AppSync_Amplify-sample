@@ -25,3 +25,7 @@
 - resolver_auth/
   - [AWS AppSyncのリゾルバで、AWS CognitoのグループやHTTPリクエストヘッダを使った認可処理を書いてみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/14/215622)
     - aws-amplify 1.1.30
+    
+- infra_by_amplify/
+  - [AWS AppSync + Amplify JavaScript + CustomResourcesで、既存のDynamoDBなどをDatasourceとしたリゾルバーを作成する - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/15/201356)
+    - aws-amplify 1.1.30
