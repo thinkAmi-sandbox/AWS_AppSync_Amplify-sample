@@ -1,8 +1,8 @@
 {
     "identityPoolName": "directiveauthidpool",
     "allowUnauthenticatedIdentities": false,
-    "openIdLambdaRoleName": "existib5bd8fa8_openid_lambda_role",
-    "resourceNameTruncated": "existib5bd8fa8",
+    "openIdLambdaRoleName": "direct5a3fbf73_openid_lambda_role",
+    "resourceNameTruncated": "direct5a3fbf73",
     "userPoolName": "directiveauthuserpool",
     "autoVerifiedAttributes": [
         "email"
@@ -21,7 +21,7 @@
     "requiredAttributes": [
         "email"
     ],
-    "userpoolClientName": "existib5bd8fa8_app_client",
+    "userpoolClientName": "direct5a3fbf73_app_client",
     "userpoolClientGenerateSecret": true,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
@@ -30,13 +30,12 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "mfaLambdaRole": "existib5bd8fa8_totp_lambda_role",
-    "userpoolClientLambdaRole": "existib5bd8fa8_userpoolclient_lambda_role",
+    "mfaLambdaRole": "direct5a3fbf73_totp_lambda_role",
+    "userpoolClientLambdaRole": "direct5a3fbf73_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "useDefault": "manual",
+    "useDefault": "default",
     "authSelections": "identityPoolAndUserPool",
     "resourceName": "existingawsresourcesb5bd8fa8b5bd8fa8",
-    "thirdPartyAuth": false,
     "triggers": "{}",
     "hostedUI": false,
     "authRoleName": {
