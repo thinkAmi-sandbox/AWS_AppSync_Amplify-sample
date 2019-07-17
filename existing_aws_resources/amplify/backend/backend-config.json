@@ -1,0 +1,9 @@
+{
+	"auth": {
+		"existingawsresourcesb5bd8fa8b5bd8fa8": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	}
+}
