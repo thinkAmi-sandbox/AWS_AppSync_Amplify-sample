@@ -29,3 +29,7 @@
 - infra_by_amplify/
   - [AWS AppSync + Amplify JavaScript + CustomResourcesで、既存のDynamoDBなどをDatasourceとしたリゾルバーを作成する - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/15/201356)
     - aws-amplify 1.1.30
+    
+- existing_aws_resources/
+  - [AWS Amplifyで、既存のAmazon Cognitoを使う方法を探してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/18/074257)
+    - @aws-amplify/cli 1.8.2
