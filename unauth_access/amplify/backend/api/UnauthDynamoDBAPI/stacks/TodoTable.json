@@ -1,0 +1,332 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Todo stack",
+    "Metadata": {},
+    "Parameters": {
+        "AppSyncApiId": {
+            "Type": "String",
+            "Description": "The id of the AppSync API associated with this project."
+        },
+        "env": {
+            "Type": "String",
+            "Description": "The environment name. e.g. Dev, Test, or Production",
+            "Default": "NONE"
+        },
+        "DynamoDBBillingMode": {
+            "Type": "String",
+            "Description": "Configure @model types to create DynamoDB tables with PAY_PER_REQUEST or PROVISIONED billing modes.",
+            "Default": "PAY_PER_REQUEST",
+            "AllowedValues": [
+                "PAY_PER_REQUEST",
+                "PROVISIONED"
+            ]
+        },
+        "S3DeploymentBucket": {
+            "Type": "String",
+            "Description": "The S3 bucket containing all deployment assets for the project."
+        },
+        "S3DeploymentRootKey": {
+            "Type": "String",
+            "Description": "An S3 key relative to the S3DeploymentBucket that points to the root of the deployment directory."
+        }
+    },
+    "Resources": {
+        "TodoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "TodoUnauth",
+                            {
+                                "Ref": "env"
+                            }
+                        ]
+                    ]
+                },
+                "KeySchema": [
+                    {
+                        "AttributeName": "title",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "title",
+                        "AttributeType": "S"
+                    }
+                ],
+                "BillingMode": {
+                    "Fn::If": [
+                        "ShouldUsePayPerRequestBilling",
+                        "PAY_PER_REQUEST",
+                        {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                }
+            }
+        },
+
+        "TodoIAMRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "TodoTableUnauthAccessRole",
+                            {
+                                "Ref": "env"
+                            }
+                        ]
+                    ]
+                },
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "appsync.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "DynamoDBAccess",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "dynamodb:GetItem"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Sub": [
+                                                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}",
+                                                {
+                                                    "tablename": {
+                                                        "Ref": "TodoTable"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Sub": [
+                                                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/*",
+                                                {
+                                                    "tablename": {
+                                                        "Ref": "TodoTable"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+
+        "UnauthAccessPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "appsync:GraphQL"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Sub": [
+                                        "arn:aws:appsync:${AWS::Region}:${AWS::AccountId}:apis/${apiID}/types/Query/*",
+                                        {
+                                            "apiID": {
+                                                "Ref": "AppSyncApiId"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Sub": [
+                        "MyUnauthAccessPolicy-${apiID}",
+                        {
+                            "apiID": {
+                                "Ref": "AppSyncApiId"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+
+        "TodoDataSource": {
+            "Type": "AWS::AppSync::DataSource",
+            "Properties": {
+                "ApiId": {"Ref": "AppSyncApiId"},
+                "Name": "TodoTable",
+                "Type": "AMAZON_DYNAMODB",
+                "ServiceRoleArn": {
+                    "Fn::GetAtt": ["TodoIAMRole", "Arn"]
+                },
+                "DynamoDBConfig": {
+                    "AwsRegion": {
+                        "Ref": "AWS::Region"
+                    },
+                    "TableName": {"Ref": "TodoTable"}
+                }
+            }
+        },
+
+        "GetTodoResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {"Ref": "AppSyncApiId"},
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "TodoDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "getTodo",
+                "TypeName": "Query",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "Query",
+                                        "getTodo",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "Query",
+                                        "getTodo",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+
+        "CreateTodoResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {"Ref": "AppSyncApiId"},
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "TodoDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "createTodo",
+                "TypeName": "Mutation",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "Mutation",
+                                        "createTodo",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "Mutation",
+                                        "createTodo",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "Conditions": {
+        "ShouldUsePayPerRequestBilling": {
+            "Fn::Equals": [
+                {
+                    "Ref": "DynamoDBBillingMode"
+                },
+                "PAY_PER_REQUEST"
+            ]
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+	"auth": {
+		"UnauthDynamoDBResource": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	},
+	"api": {
+		"UnauthDynamoDBAPI": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "API_KEY"
+			}
+		}
+	}
+}
