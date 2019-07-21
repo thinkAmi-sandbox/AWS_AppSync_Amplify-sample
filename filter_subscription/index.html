@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Amplify Framework</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="app">
+  <div>フィルターなし
+    <button id="none">Non Filter</button>
+  </div>
+  <div>タイトルだけ (title=foo)
+    <button id="title_only">Title Only</button>
+  </div>
+  <div>すべて (title=foo, content=bar)
+    <button id="all">All Filter</button>
+  </div>
+
+
+  <div>データ作成
+    <label for="title">タイトル</label>
+    <input type="text" id="title" placeholder="my title" />
+    <label for="content">内容</label>
+    <input type="text" id="content" placeholder="my content" />
+  </div>
+
+  <div>
+    <button id="create">Create</button>
+  </div>
+
+
+</div>
+<script src="main.bundle.js"></script>
+</body>
+</html>

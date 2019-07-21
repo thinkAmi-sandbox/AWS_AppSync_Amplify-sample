@@ -1,0 +1,11 @@
+{
+	"api": {
+		"FilterSubscription": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "API_KEY"
+			}
+		}
+	}
+}

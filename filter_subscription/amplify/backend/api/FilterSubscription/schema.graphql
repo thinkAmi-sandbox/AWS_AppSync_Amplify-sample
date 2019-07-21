@@ -1,0 +1,11 @@
+type Blog
+        @model(queries: {get: "getBlog"}, mutations: {create: "createBlog"},
+            subscriptions: { onCreate: [
+                "none",
+                "titleOnly(title: String!)",
+                "all(title: String!, content: String)",
+            ]})
+        @key(fields: ["title"]) {
+    title: String!
+    content: String
+}
