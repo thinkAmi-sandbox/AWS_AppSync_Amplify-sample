@@ -33,3 +33,7 @@
 - existing_aws_resources/
   - [AWS Amplifyで、既存のAmazon Cognitoを使う方法を探してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/18/074257)
     - @aws-amplify/cli 1.8.2
+
+- unauth_access/
+  - [AWS AppSync + Amplifyで、AWS_IAM認証を使って、認証されていないユーザーに対してQueryを許可してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/21/120653)
+    - @aws-amplify/cli 1.8.2
