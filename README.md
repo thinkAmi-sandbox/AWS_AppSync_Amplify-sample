@@ -37,3 +37,7 @@
 - unauth_access/
   - [AWS AppSync + Amplifyで、AWS_IAM認証を使って、認証されていないユーザーに対してQueryを許可してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/21/120653)
     - @aws-amplify/cli 1.8.2
+    
+- filter_subscription/
+  - [AWS AppSync + Amplifyで、Subscriptionに引数を追加し、一部のみ通知を受け取ってみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/22/062759)
+    - @aws-amplify/cli 1.8.2
