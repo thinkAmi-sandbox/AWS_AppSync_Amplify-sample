@@ -1,4 +1,5 @@
 type MyType @model {
 	id: ID!
 	title: String!
+	content: String
 }

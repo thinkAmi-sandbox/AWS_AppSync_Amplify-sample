@@ -1,6 +1,6 @@
 projects:
   graphqlconfigyml:
-    schemaPath: src/graphql/schema.json
+    schemaPath: src_3rd/graphql/schema.json
     includes:
       - src/graphql/**/*.js
     excludes:

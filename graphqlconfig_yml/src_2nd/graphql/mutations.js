@@ -5,6 +5,7 @@ export const createMyType = `mutation CreateMyType($input: CreateMyTypeInput!) {
   createMyType(input: $input) {
     id
     title
+    content
   }
 }
 `;
@@ -12,6 +13,7 @@ export const updateMyType = `mutation UpdateMyType($input: UpdateMyTypeInput!) {
   updateMyType(input: $input) {
     id
     title
+    content
   }
 }
 `;
@@ -19,6 +21,7 @@ export const deleteMyType = `mutation DeleteMyType($input: DeleteMyTypeInput!) {
   deleteMyType(input: $input) {
     id
     title
+    content
   }
 }
 `;

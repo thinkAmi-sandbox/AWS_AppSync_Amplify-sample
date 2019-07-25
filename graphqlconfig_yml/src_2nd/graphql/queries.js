@@ -5,6 +5,7 @@ export const getMyType = `query GetMyType($id: ID!) {
   getMyType(id: $id) {
     id
     title
+    content
   }
 }
 `;
@@ -17,6 +18,7 @@ export const listMyTypes = `query ListMyTypes(
     items {
       id
       title
+      content
     }
     nextToken
   }
