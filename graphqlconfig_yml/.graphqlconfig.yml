@@ -9,4 +9,4 @@ projects:
       amplify:
         codeGenTarget: javascript
         generatedFileName: ''
-        docsFilePath: src/graphql
+        docsFilePath: src_2nd/graphql
