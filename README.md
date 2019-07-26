@@ -45,3 +45,7 @@
 - graphqlconfig_yml/
   - [AWS Amplify CLIで、.graphqlconfig.ymlを使って、schema.jsonやqueries.jsonの保存場所を変更する - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/25/235947)
     - @aws-amplify/cli 1.8.5
+    
+- subscription_for_same_update/
+  - [AWS AppSyncにて、同じ内容でMutationした場合に、Subscriptionがどうなるかを試してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/26/222659)
+    - aws-amplify 1.1.32
