@@ -1,0 +1,26 @@
+type Todo {
+	title: String!
+	content: String
+}
+
+input TodoInput {
+	title: String!
+	content: String
+}
+
+
+type Query {
+	getTodo(title: String!): Todo
+}
+
+type Mutation {
+	createTodo(input: TodoInput!): Todo
+	updateTodo(input: TodoInput!): Todo
+}
+
+type Subscription {
+	onCreateTodo(title: String, content: String): Todo
+		@aws_subscribe(mutations: ["createTodo"])
+	onUpdateTodo(title: String, content: String): Todo
+		@aws_subscribe(mutations: ["updateTodo"])
+}
