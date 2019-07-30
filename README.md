@@ -49,3 +49,7 @@
 - subscription_for_same_update/
   - [AWS AppSyncにて、同じ内容でMutationした場合に、Subscriptionがどうなるかを試してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/26/222659)
     - aws-amplify 1.1.32
+    
+- custom_category/
+  - [AWS Amplifyで、カスタムカテゴリを作って、カスタムリソースを追加してみた - メモ的な思考的な](https://thinkami.hatenablog.com/entry/2019/07/30/225425)
+    - @aws-amplify/cli 1.8.5
