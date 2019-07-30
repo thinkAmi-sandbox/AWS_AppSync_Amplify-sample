@@ -1,0 +1,81 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AppSync GraphQL Policy",
+  "Metadata": {},
+  "Parameters": {
+    "AppSyncApiId": {
+      "Type": "String",
+      "Description": "The id of the AppSync API associated with this project."
+    },
+    "env": {
+      "Type": "String",
+      "Description": "The environment name. e.g. Dev, Test, or Production",
+      "Default": "NONE"
+    },
+    "UnauthRoleName": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "AppSyncGraphQLPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "appsync:GraphQL"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": [
+                    "arn:aws:appsync:${AWS::Region}:${AWS::AccountId}:apis/${apiID}/types/Query/*",
+                    {
+                      "apiID": {
+                        "Ref": "AppSyncApiId"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "Fn::Sub": [
+                    "arn:aws:appsync:${AWS::Region}:${AWS::AccountId}:apis/${apiID}/types/Mutation/*",
+                    {
+                      "apiID": {
+                        "Ref": "AppSyncApiId"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyName": {
+          "Fn::Join": [
+            "-",
+            [
+              "AppSyncGraphQLPolicy",
+              {
+                "Ref": "env"
+              }
+            ]
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "UnauthRoleName"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "EmptyOutput": {
+      "Description": "An empty output. You may delete this if you have at least one resource above.",
+      "Value": ""
+    }
+  }
+}

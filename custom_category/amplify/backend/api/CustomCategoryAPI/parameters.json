@@ -1,0 +1,21 @@
+{
+    "AppSyncApiName": "CustomCategoryAPI",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": "false",
+    "UnauthRoleName": {
+        "Ref": "UnauthRole"
+    },
+    "StackIdentityPoolName": "CustomIdentityPoolStack",
+    "AuthRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    },
+    "UnauthRoleArn": {
+        "Fn::GetAtt": [
+            "UnauthRole",
+            "Arn"
+        ]
+    }
+}

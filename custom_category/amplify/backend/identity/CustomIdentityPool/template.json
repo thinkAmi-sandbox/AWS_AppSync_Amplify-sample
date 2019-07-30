@@ -1,0 +1,65 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Custom Identity Pool",
+  "Metadata": {},
+  "Parameters": {
+    "env": {
+      "Type": "String",
+      "Description": "The environment name. e.g. Dev, Test, or Production",
+      "Default": "NONE"
+    },
+    "IdentityPoolName": {
+      "Type": "String"
+    },
+    "AuthRoleArn": {
+      "Type": "String"
+    },
+    "UnauthRoleArn": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "IdentityPool": {
+      "Type": "AWS::Cognito::IdentityPool",
+      "Properties": {
+        "IdentityPoolName": {
+          "Fn::Join": [
+            "__",
+            [
+              {
+                "Ref": "IdentityPoolName"
+              },
+              {
+                "Ref": "env"
+              }
+            ]
+          ]
+        },
+        "AllowUnauthenticatedIdentities": "true"
+      }
+    },
+    "IdentityPoolRoleMap": {
+      "Type": "AWS::Cognito::IdentityPoolRoleAttachment",
+      "Properties": {
+        "IdentityPoolId": {
+          "Ref": "IdentityPool"
+        },
+        "Roles": {
+          "unauthenticated": {
+            "Ref": "UnauthRoleArn"
+          },
+          "authenticated": {
+            "Ref": "AuthRoleArn"
+          }
+        }
+      },
+      "DependsOn": "IdentityPool"
+    }
+  },
+  "Outputs": {
+    "EmptyOutput": {
+      "Description": "An empty output. You may delete this if you have at least one resource above.",
+      "Value": ""
+    }
+  }
+}

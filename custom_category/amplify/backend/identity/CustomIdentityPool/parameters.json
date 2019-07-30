@@ -1,0 +1,15 @@
+{
+  "IdentityPoolName": "CustomIdentityPool",
+  "AuthRoleArn": {
+    "Fn::GetAtt": [
+      "AuthRole",
+      "Arn"
+    ]
+  },
+  "UnauthRoleArn": {
+    "Fn::GetAtt": [
+      "UnauthRole",
+      "Arn"
+    ]
+  }
+}

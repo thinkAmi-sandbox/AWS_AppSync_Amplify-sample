@@ -1,0 +1,16 @@
+{
+	"api": {
+		"CustomCategoryAPI": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "API_KEY"
+			}
+		}
+	},
+	"identity": {
+		"CustomIdentityPool": {
+			"providerPlugin": "awscloudformation"
+		}
+	}
+}
